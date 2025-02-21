@@ -2,22 +2,21 @@ import { Link } from "react-router-dom"
 
 function ScoreBoard() {
 
-    const storedScorePlayerOne = JSON.parse(localStorage.getItem("scorePlayerOne")) || 0
-    const storedScorePlayerTwo = JSON.parse(localStorage.getItem("scorePlayerTwo")) || 0
+    const gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || []
 
-    const storedPlayers = JSON.parse(localStorage.getItem("players")) || []
-
-    const playerOne = storedPlayers[0]
-    const playerTwo = storedPlayers[1]
-
-  return (
-    <div>
-        <Link to="/game"><button>Back</button></Link>
-        <div>Scores:</div>
-        <div>{playerOne} {storedScorePlayerOne}</div>
-        <div>{playerTwo} {storedScorePlayerTwo}</div>
-    </div>
-  )
+    return (
+        <div>
+            <Link to="/"><button>To the main page</button></Link>
+            {gameHistory > 0 &&<div>Scores:</div>}
+            {gameHistory.map((game, index) => (
+                <div key={index}>
+                    <div>{game.playerOne.name} : {game.playerOne.score}</div>
+                    <div>{game.playerTwo.name} : {game.playerTwo.score}</div>
+                    <Link to="/game-continue"><button>Continue Playing</button></Link>
+                </div>
+            ))}
+        </div>
+    )    
 }
 
 export default ScoreBoard

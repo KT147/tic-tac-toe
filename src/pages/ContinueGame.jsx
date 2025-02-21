@@ -105,8 +105,7 @@ function Game() {
                     <h2>{winner === "X" ? playerOne : playerTwo} wins!</h2>
             )}
 
-            {winner ?<button onClick={resetGame}>New Game</button> :
-              <button onClick={resetGame}>Reset</button>}  
+            <button onClick={resetGame}>New Game</button>     
 
             <div className="gameboard">
                 {board.map((value, index) => (

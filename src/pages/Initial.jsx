@@ -17,11 +17,14 @@ function Initial() {
 
   return (
     <div>
+        <div>Enter player names</div> 
         <label>Player 1</label>
         <input ref={playerOneRef} type="text" /> <br /><br />
         <label>Player 2</label>
         <input ref={playerTwoRef} type="text" /> <br /><br />
         <Link to="/game"><button onClick={startTheGame}>Start the game</button></Link>
+        <br /><br />
+        <Link to="/scoreboard"><button>Scoreboard</button></Link>
     </div>
   )
 }
