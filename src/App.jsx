@@ -11,7 +11,7 @@ function App() {
 
   return (
     <>
-      <h1>TIC-TAC-TOE</h1>
+      <img className='head-picture' src="/head-pic.png" alt="" />
       <ScoreContextProvider> 
         <Routes>
           <Route path="/" exact element={<Initial/>}/>

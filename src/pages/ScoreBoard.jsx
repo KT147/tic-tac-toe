@@ -11,12 +11,12 @@ function ScoreBoard() {
     }, []); 
 
     return (
-        <div>
+        <div> <br />
             <Link to="/"><button>To the main page</button></Link>
-            <br /><br /> <br />
-            {gameHistory.length > 0 && <div>Scores:</div>}
+            <br /><br />
+            {gameHistory.length > 0 && <h2 className="scores">SCORES:</h2>}
             {gameHistory.map((game, index) => (
-                <div key={index}>
+                <div className="player-scores" key={index}>
                     <div>{game.playerOne.name} : {game.playerOne.score}</div>
                     <div>{game.playerTwo.name} : {game.playerTwo.score}</div>
                     <Link to={"/game-continue/" + index}><button>Continue Playing</button></Link>

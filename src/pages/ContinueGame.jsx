@@ -97,19 +97,22 @@ function ContinueGame() {
 
     return (
         <div>
-            <Link to="/"><button>Back To Main Page</button></Link>
-            <br />
+            
             <div>
-                <span>Score: <br />
-                Player 1 (X) {playerOne}  {scorePlayerOne} <br />
-                Player 2 (O) {playerTwo} {scorePlayerTwo}</span>
-            </div>
+             <span className='score'><h2>SCORE:</h2>
+                PLAYER 1 (X) <span className='player'>{playerOne} {scorePlayerOne}</span> <br />
+                PLAYER 2 (O) <span className='player'>{playerTwo} {scorePlayerTwo}</span>
+            </span>
+            </div> <br />
 
             {winner && (
-                <h2>{winner === "X" ? playerOne : playerTwo} wins!</h2>
+                <h2 className='winner'>{winner === "X" ? playerOne : playerTwo} wins!</h2>
             )}
 
-            <button onClick={resetGame}>New Game</button>
+            {winner ? <button onClick={resetGame}>New Game</button> :
+             <button onClick={resetGame}>Reset</button>} 
+
+            <br /><br /><br />
 
             <div className="gameboard">
                 {board.map((value, index) => (
@@ -127,6 +130,8 @@ function ContinueGame() {
             <Link to="/scoreboard">
                 <button onClick={handleQuitGame}>Quit the game</button>
             </Link>
+            <br /><br />
+            <Link to="/"><button>Back To Main Page</button></Link>
         </div>
     );
 }
