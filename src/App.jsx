@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Initial/>}/>
           <Route path="/game" exact element={<Game/>}/>
-          <Route path="/game-continue" exact element={<ContinueGame/>}/>
+          <Route path="/game-continue/:index" exact element={<ContinueGame/>}/>
           <Route path="/scoreboard" exact element={<ScoreBoard/>}/>
         </Routes>
       </ScoreContextProvider>

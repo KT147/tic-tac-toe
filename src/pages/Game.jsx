@@ -1,131 +1,129 @@
 import xImage from '../assets/x.png';
 import oImage from '../assets/o.png';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { ScoreContext } from './ScoreContext';  
 
 function Game() {
-    const storedPlayers = JSON.parse(localStorage.getItem("players")) || []
-    const playerOne = storedPlayers[0]
-    const playerTwo = storedPlayers[1]
+  const { players, updateGameHistory } = useContext(ScoreContext);  
+  const playerOne = players[0] || "Player 1";
+  const playerTwo = players[1] || "Player 2";
 
-    const [count, setCount] = useState(0)
-    const [board, setBoard] = useState(Array(9).fill(null))
-    const [winner, setWinner] = useState(null)
-    const [scorePlayerOne, setScorePlayerOne] = useState(0)
-    const [scorePlayerTwo, setScorePlayerTwo] = useState(0)
+  const [count, setCount] = useState(0);
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [winner, setWinner] = useState(null);
+  const [scorePlayerOne, setScorePlayerOne] = useState(0);
+  const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
 
-    const getPlayerImage = (player) => {
-        return player === "X" ? xImage : oImage
-    };
+  const getPlayerImage = (player) => {
+    return player === "X" ? xImage : oImage;
+  };
 
-    const getWinner = (board) => {
-        const winningCombinations = [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8],
-          [0, 3, 6],
-          [1, 4, 7],
-          [2, 5, 8],
-          [0, 4, 8],
-          [2, 4, 6],
-        ];
-        for (let combo of winningCombinations) {
-            const [a, b, c] = combo
-            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                return board[a]
-            }
-        }
-        return null
-    };
-
-    const toggle = (index) => {
-        if (board[index] || winner) return
-
-        const newBoard = [...board];
-        newBoard[index] = count % 2 === 0 ? "X" : "O"
-        setBoard(newBoard)
-        setCount(count + 1)
-
-        const currentWinner = getWinner(newBoard);
-        if (currentWinner) {
-            setWinner(currentWinner)
-            updateScore(currentWinner)
-        }
-    };
-
-    const updateScore = (currentWinner) => {
-        if (currentWinner === "X") {
-            setScorePlayerOne(scorePlayerOne + 1)
-        } else if (currentWinner === "O") {
-            setScorePlayerTwo(scorePlayerTwo + 1)
-        }
+  const getWinner = (board) => {
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let combo of winningCombinations) {
+      const [a, b, c] = combo;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return board[a];
+      }
     }
+    return null;
+  };
 
-    const saveGameResult = () => {
-        const previousGames = JSON.parse(localStorage.getItem("gameHistory")) || []
-        const gameResult = {
-            playerOne: {
-                name: playerOne,
-                score: scorePlayerOne, 
-            },
-            playerTwo: {
-                name: playerTwo,
-                score: scorePlayerTwo, 
-            },
-        }
+  const toggle = (index) => {
+    if (board[index] || winner) return;
 
-        previousGames.push(gameResult)
-        localStorage.setItem("gameHistory", JSON.stringify(previousGames))
-    };
+    const newBoard = [...board];
+    newBoard[index] = count % 2 === 0 ? "X" : "O";
+    setBoard(newBoard);
+    setCount(count + 1);
 
-    const resetGame = () => {
-        setBoard(Array(9).fill(null))
-        setCount(0)
-        setWinner(null)
+    const currentWinner = getWinner(newBoard);
+    if (currentWinner) {
+      setWinner(currentWinner);
+      updateScore(currentWinner);
     }
+  };
 
-  
-    const handleQuitGame = () => {
-        if (winner) {
-            saveGameResult()
-        }
+  const updateScore = (currentWinner) => {
+    if (currentWinner === "X") {
+      setScorePlayerOne(scorePlayerOne + 1);
+    } else if (currentWinner === "O") {
+      setScorePlayerTwo(scorePlayerTwo + 1);
+    }
+  };
+
+  const saveGameResult = () => {
+    const gameResult = {
+      playerOne: {
+        name: playerOne,
+        score: scorePlayerOne,
+      },
+      playerTwo: {
+        name: playerTwo,
+        score: scorePlayerTwo,
+      },
     };
 
-    return (
-        <div>
-            <Link to="/"><button>Back To Main Page</button></Link>
-            <br />
-            <div>
-                <span>Score: <br /> 
-                Player 1 (X) {playerOne}  {scorePlayerOne} <br />
-                Player 2 (O) {playerTwo} {scorePlayerTwo}</span>
-            </div>
+    updateGameHistory(gameResult); 
+  };
 
-            {winner && (
-                    <h2>{winner === "X" ? playerOne : playerTwo} wins!</h2>
-            )}
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setCount(0);
+    setWinner(null);
+  };
 
-            {winner ?<button onClick={resetGame}>New Game</button> :
-              <button onClick={resetGame}>Reset</button>}  
+  const handleQuitGame = () => {
+    if (winner) {
+      saveGameResult();
+    }
+  };
 
-            <div className="gameboard">
-                {board.map((value, index) => (
-                    <span key={index} className="box" onClick={() => toggle(index)}>
-                        {value === "X" ? (
-                            <img className="x-image" src={getPlayerImage(value)} alt={value} />
-                        ) : value === "O" ? (
-                            <img className="o-image" src={getPlayerImage(value)} alt={value} />
-                        ) : ""}
-                    </span>
-                ))}
-            </div>
+  return (
+    <div>
+      <div>
+        <span>Score: <br />
+          Player 1 (X) {playerOne} {scorePlayerOne} <br />
+          Player 2 (O) {playerTwo} {scorePlayerTwo}
+        </span>
+      </div>
 
-            <br /><br />
-            <Link to="/scoreboard">
-                <button onClick={handleQuitGame}>Quit the game</button>
-            </Link>
-        </div>
-    );
+      {winner && (
+        <h2>{winner === "X" ? playerOne : playerTwo} wins!</h2>
+      )}
+
+      {winner ? <button onClick={resetGame}>New Game</button> :
+        <button onClick={resetGame}>Reset</button>}
+
+      <div className="gameboard">
+        {board.map((value, index) => (
+          <span key={index} className="box" onClick={() => toggle(index)}>
+            {value === "X" ? (
+              <img className="x-image" src={getPlayerImage(value)} alt={value} />
+            ) : value === "O" ? (
+              <img className="o-image" src={getPlayerImage(value)} alt={value} />
+            ) : ""}
+          </span>
+        ))}
+      </div>
+
+      <br /><br />
+      <Link to="/scoreboard">
+        <button onClick={handleQuitGame}>Quit The Game</button>
+      </Link> <br />
+      <Link to="/"><button>Back To Main Page</button></Link>
+    </div>
+  );
 }
 
 export default Game;
