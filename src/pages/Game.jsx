@@ -14,6 +14,7 @@ function Game() {
   const [winner, setWinner] = useState(null);
   const [scorePlayerOne, setScorePlayerOne] = useState(0);
   const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
+  const [round, setRound] = useState(1)
 
   const getPlayerImage = (player) => {
     return player === "X" ? xImage : oImage;
@@ -39,11 +40,15 @@ function Game() {
     return null;
   };
 
+  const getStartingPlayer = () => {
+    return round % 2 === 1 ? "X" : "O"
+  }
+
   const toggle = (index) => {
     if (board[index] || winner) return;
 
     const newBoard = [...board];
-    newBoard[index] = count % 2 === 0 ? "X" : "O";
+    newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X")
     setBoard(newBoard);
     setCount(count + 1);
 
@@ -81,6 +86,7 @@ function Game() {
     setBoard(Array(9).fill(null));
     setCount(0);
     setWinner(null);
+    setRound(round +1)
   };
 
   const handleQuitGame = () => {
@@ -106,7 +112,7 @@ function Game() {
         <button onClick={resetGame}>Reset</button>}
 
         <br /><br /><br />
-
+        
       <div className="gameboard">
         {board.map((value, index) => (
           <span key={index} className="box" onClick={() => toggle(index)}>
