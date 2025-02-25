@@ -6,18 +6,51 @@ import { ScoreContext } from './ScoreContext';
 
 function Game() {
   const { players, updateGameHistory } = useContext(ScoreContext);  
+
   const playerOne = players[0] || "Player 1";
   const playerTwo = players[1] || "Player 2";
 
-  const [count, setCount] = useState(0);
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [winner, setWinner] = useState(null);
   const [scorePlayerOne, setScorePlayerOne] = useState(0);
   const [scorePlayerTwo, setScorePlayerTwo] = useState(0);
-  const [round, setRound] = useState(1)
+
+  const [count, setCount] = useState(0); /// käikude tegemiseks
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [winner, setWinner] = useState(null);
+  const [round, setRound] = useState(1);
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setCount(0);
+    setWinner(null);
+    setRound(round +1);
+    if (winner) {
+      saveGameResult();
+    }
+  };
 
   const getPlayerImage = (player) => {
     return player === "X" ? xImage : oImage;
+  };
+
+  //voorude vahetamiseks mängu alguses
+  const getStartingPlayer = () => {
+    return round % 2 === 1 ? "X" : "O"
+  };
+
+  const toggle = (index) => {
+    if (board[index] || winner) return; // kontrollib kas mängija on ruudule käigu teinud või kas võitja on olemas; siis ei saa midagi teha enam
+                                        // ei lase mitu korda ühele ruudele vajutada
+
+    const newBoard = [...board];
+    newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X"); // esimene käik on nr 0
+    setBoard(newBoard);
+    setCount(count + 1);
+
+    const currentWinner = getWinner(newBoard);
+    if (currentWinner) {
+      setWinner(currentWinner);
+      updateScore(currentWinner);
+    };
   };
 
   const getWinner = (board) => {
@@ -35,28 +68,9 @@ function Game() {
       const [a, b, c] = combo;
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
         return board[a];
-      }
-    }
+      };
+    };
     return null;
-  };
-
-  const getStartingPlayer = () => {
-    return round % 2 === 1 ? "X" : "O"
-  }
-
-  const toggle = (index) => {
-    if (board[index] || winner) return;
-
-    const newBoard = [...board];
-    newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X")
-    setBoard(newBoard);
-    setCount(count + 1);
-
-    const currentWinner = getWinner(newBoard);
-    if (currentWinner) {
-      setWinner(currentWinner);
-      updateScore(currentWinner);
-    }
   };
 
   const updateScore = (currentWinner) => {
@@ -78,15 +92,7 @@ function Game() {
         score: scorePlayerTwo,
       },
     };
-
     updateGameHistory(gameResult); 
-  };
-
-  const resetGame = () => {
-    setBoard(Array(9).fill(null));
-    setCount(0);
-    setWinner(null);
-    setRound(round +1)
   };
 
   const handleQuitGame = () => {
@@ -113,13 +119,14 @@ function Game() {
 
         <br /><br /><br />
         
+        {/* value tähistab mänguruudu hetkeväärtust-- null, X või O */}
       <div className="gameboard">
         {board.map((value, index) => (
           <span key={index} className="box" onClick={() => toggle(index)}>
             {value === "X" ? (
-              <img className="x-image" src={getPlayerImage(value)} alt={value} />
+              <img className="x-image" src={getPlayerImage(value)}/>
             ) : value === "O" ? (
-              <img className="o-image" src={getPlayerImage(value)} alt={value} />
+              <img className="o-image" src={getPlayerImage(value)}/>
             ) : ""}
           </span>
         ))}

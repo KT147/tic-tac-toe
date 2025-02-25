@@ -8,8 +8,8 @@ function ContinueGame() {
     const gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || [];
     const currentGame = gameHistory[index] || {};  
 
-    const playerOne = currentGame.playerOne ? currentGame.playerOne.name : "Player 1";
-    const playerTwo = currentGame.playerTwo ? currentGame.playerTwo.name : "Player 2";
+    const playerOne = currentGame.playerOne.name;
+    const playerTwo = currentGame.playerTwo.name;
     const [scorePlayerOne, setScorePlayerOne] = useState(currentGame.playerOne ? currentGame.playerOne.score : 0);
     const [scorePlayerTwo, setScorePlayerTwo] = useState(currentGame.playerTwo ? currentGame.playerTwo.score : 0);
 
@@ -18,8 +18,37 @@ function ContinueGame() {
     const [winner, setWinner] = useState(null);
     const [round, setRound] = useState(1)
 
+    const resetGame = () => {
+        setBoard(Array(9).fill(null));
+        setCount(0);
+        setWinner(null);
+        setRound(round +1);
+        if (winner) {
+            saveGameResult();
+          }
+    };
+
     const getPlayerImage = (player) => {
         return player === "X" ? xImage : oImage;
+    };
+
+    const getStartingPlayer = () => {
+        return round % 2 === 1 ? "X" : "O"
+      };
+
+    const toggle = (index) => {
+        if (board[index] || winner) return;
+
+        const newBoard = [...board];
+        newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X")
+        setBoard(newBoard);
+        setCount(count + 1);
+
+        const currentWinner = getWinner(newBoard);
+        if (currentWinner) {
+            setWinner(currentWinner);
+            updateScore(currentWinner);
+        }
     };
 
     const getWinner = (board) => {
@@ -40,25 +69,6 @@ function ContinueGame() {
             }
         }
         return null;
-    };
-
-    const getStartingPlayer = () => {
-        return round % 2 === 1 ? "X" : "O"
-      }
-
-    const toggle = (index) => {
-        if (board[index] || winner) return;
-
-        const newBoard = [...board];
-        newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X")
-        setBoard(newBoard);
-        setCount(count + 1);
-
-        const currentWinner = getWinner(newBoard);
-        if (currentWinner) {
-            setWinner(currentWinner);
-            updateScore(currentWinner);
-        }
     };
 
     const updateScore = (currentWinner) => {
@@ -86,13 +96,6 @@ function ContinueGame() {
         previousGames[index] = updatedGameResult;
 
         localStorage.setItem("gameHistory", JSON.stringify(previousGames));
-    };
-
-    const resetGame = () => {
-        setBoard(Array(9).fill(null));
-        setCount(0);
-        setWinner(null);
-        setRound(round +1)
     };
 
     const handleQuitGame = () => {
@@ -124,9 +127,9 @@ function ContinueGame() {
                 {board.map((value, index) => (
                     <span key={index} className="box" onClick={() => toggle(index)}>
                         {value === "X" ? (
-                            <img className="x-image" src={getPlayerImage(value)} alt={value} />
+                            <img className="x-image" src={getPlayerImage(value)}/>
                         ) : value === "O" ? (
-                            <img className="o-image" src={getPlayerImage(value)} alt={value} />
+                            <img className="o-image" src={getPlayerImage(value)}/>
                         ) : ""}
                     </span>
                 ))}
