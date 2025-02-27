@@ -18,14 +18,17 @@ function Game() {
   const [winner, setWinner] = useState(null);
   const [round, setRound] = useState(1);
 
-  const resetGame = () => {
+  const newGame = () => {
     setBoard(Array(9).fill(null));
     setCount(0);
     setWinner(null);
     setRound(round +1);
-    if (winner) {
-      saveGameResult();
-    }
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setCount(0);
+    setWinner(null);
   };
 
   const getPlayerImage = (player) => {
@@ -43,6 +46,7 @@ function Game() {
 
     const newBoard = [...board];
     newBoard[index] = (count % 2 === 0) ? getStartingPlayer() : (getStartingPlayer() === "X" ? "O" : "X"); // esimene käik on nr 0
+                                              //newBoard[index] = count % 2 === 0 ? "X" : "O" <-- algne lahendus
     setBoard(newBoard);
     setCount(count + 1);
 
@@ -114,7 +118,7 @@ function Game() {
         <h2 className='winner'>{winner === "X" ? playerOne : playerTwo} wins!</h2>
       )}
 
-      {winner ? <button onClick={resetGame}>New Game</button> :
+      {winner ? <button onClick={newGame}>New Game</button> :
         <button onClick={resetGame}>Reset</button>}
 
         <br /><br /><br />

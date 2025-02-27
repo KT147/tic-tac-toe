@@ -8,24 +8,44 @@ function ContinueGame() {
     const gameHistory = JSON.parse(localStorage.getItem("gameHistory")) || [];
     const currentGame = gameHistory[index] || {};  
 
-    const playerOne = currentGame.playerOne.name;
-    const playerTwo = currentGame.playerTwo.name;
-    const [scorePlayerOne, setScorePlayerOne] = useState(currentGame.playerOne ? currentGame.playerOne.score : 0);
-    const [scorePlayerTwo, setScorePlayerTwo] = useState(currentGame.playerTwo ? currentGame.playerTwo.score : 0);
+    // const playerOne = currentGame.playerOne.name;
+    // const playerTwo = currentGame.playerTwo.name;
+    // const [scorePlayerOne, setScorePlayerOne] = useState(currentGame.playerOne ? currentGame.playerOne.score : 0);
+    // const [scorePlayerTwo, setScorePlayerTwo] = useState(currentGame.playerTwo ? currentGame.playerTwo.score : 0);
+
+    const playerOne = currentGame.playerOne.score >= currentGame.playerTwo.score 
+    ? currentGame.playerOne.name 
+    : currentGame.playerTwo.name;
+
+    const playerTwo = currentGame.playerOne.score >= currentGame.playerTwo.score 
+    ? currentGame.playerTwo.name 
+    : currentGame.playerOne.name;
+
+    const [scorePlayerOne, setScorePlayerOne] = useState(currentGame.playerOne.score >= currentGame.playerTwo.score 
+    ? currentGame.playerOne.score 
+    : currentGame.playerTwo.score);
+
+    const [scorePlayerTwo, setScorePlayerTwo] = useState(currentGame.playerOne.score >= currentGame.playerTwo.score 
+    ? currentGame.playerTwo.score 
+    : currentGame.playerOne.score);
+
 
     const [count, setCount] = useState(0);
     const [board, setBoard] = useState(Array(9).fill(null));
     const [winner, setWinner] = useState(null);
     const [round, setRound] = useState(1)
 
-    const resetGame = () => {
+    const newGame = () => {
         setBoard(Array(9).fill(null));
         setCount(0);
         setWinner(null);
         setRound(round +1);
-        if (winner) {
-            saveGameResult();
-          }
+    };
+
+    const resetGame = () => {
+        setBoard(Array(9).fill(null));
+        setCount(0);
+        setWinner(null);
     };
 
     const getPlayerImage = (player) => {
@@ -118,7 +138,7 @@ function ContinueGame() {
                 <h2 className='winner'>{winner === "X" ? playerOne : playerTwo} wins!</h2>
             )}
 
-            {winner ? <button onClick={resetGame}>New Game</button> :
+            {winner ? <button onClick={newGame}>New Game</button> :
              <button onClick={resetGame}>Reset</button>} 
 
             <br /><br /><br />
